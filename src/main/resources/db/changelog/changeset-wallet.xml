@@ -6,6 +6,13 @@
         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.3.xsd">
 
     <changeSet id="1" author="lopin_ivan">
+
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="wallet"/>
+            </not>
+        </preConditions>
+
         <createTable tableName="wallet">
             <column name="id" type="UUID">
                 <constraints primaryKey="true" nullable="false"/>
@@ -20,5 +27,10 @@
                 <constraints nullable="false"/>
             </column>
         </createTable>
+
+        <rollback>
+            <dropTable tableName="wallet"/>
+        </rollback>
+
     </changeSet>
 </databaseChangeLog>
