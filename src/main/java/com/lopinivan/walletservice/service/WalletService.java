@@ -23,12 +23,6 @@ public class WalletService {
     @Transactional
     public void updateBalance(UUID walletId, BigDecimal amount, OperationType type) {
 
-        // Преобразуем UUID в long для использования в pg_advisory_xact_lock
-        long lockKey = getLockKey(walletId);
-
-        // Блокируем кошелек с помощью pg_advisory_xact_lock
-        walletRepository.executeNativeQuery(lockKey);
-
         Wallet wallet = walletRepository.findById(walletId)
                 .orElseThrow(() -> new WalletNotFoundException("Wallet not found"));
 
@@ -42,16 +36,10 @@ public class WalletService {
             }
             default -> throw new InvalidOperationTypeException("Unsupported operation type");
         }
-
-        walletRepository.save(wallet);
+//        walletRepository.save(wallet);
     }
 
     public Optional<Wallet> getWallet(UUID walletId) {
         return walletRepository.findById(walletId);
-    }
-
-    // Метод для получения lockKey из UUID
-    private long getLockKey(UUID walletId) {
-        return walletId.getMostSignificantBits() ^ walletId.getLeastSignificantBits();
     }
 }
