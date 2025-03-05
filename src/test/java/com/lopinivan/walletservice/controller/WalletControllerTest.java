@@ -6,11 +6,13 @@ import com.lopinivan.walletservice.dto.WalletTransactionRequest;
 import com.lopinivan.walletservice.entity.Wallet;
 import com.lopinivan.walletservice.exception.ErrorMessage;
 import com.lopinivan.walletservice.exception.InsufficientFundsException;
+import com.lopinivan.walletservice.mapper.WalletMapperImpl;
 import com.lopinivan.walletservice.service.WalletService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -27,6 +29,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(WalletController.class)
+@Import(WalletMapperImpl.class)
 public class WalletControllerTest {
 
     @Autowired
