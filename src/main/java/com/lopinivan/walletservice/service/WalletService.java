@@ -10,7 +10,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -36,9 +35,6 @@ public class WalletService {
             }
             default -> throw new InvalidOperationTypeException("Unsupported operation type");
         }
-
-        wallet.setUpdatedAt(LocalDateTime.now());
-//        walletRepository.save(wallet);
     }
 
     public Optional<Wallet> getWallet(UUID walletId) {
@@ -49,8 +45,6 @@ public class WalletService {
         Wallet wallet = new Wallet();
         wallet.setId(walletId);
         wallet.setBalance(BigDecimal.ZERO);
-        wallet.setCreatedAt(LocalDateTime.now());
-        wallet.setUpdatedAt(LocalDateTime.now());
         return walletRepository.save(wallet);
     }
 }
