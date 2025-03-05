@@ -13,28 +13,9 @@
     <version>0.0.1-SNAPSHOT</version>
     <name>wallet-service</name>
     <description>wallet-service</description>
-    <url/>
-    <licenses>
-        <license/>
-    </licenses>
-    <developers>
-        <developer/>
-    </developers>
-    <scm>
-        <connection/>
-        <developerConnection/>
-        <tag/>
-        <url/>
-    </scm>
 
     <properties>
         <java.version>17</java.version>
-        <db.host>localhost</db.host>
-        <db.port>5432</db.port>
-        <db.name>wallet_db</db.name>
-        <db.username>wallet_user</db.username>
-        <db.password>wallet_pass</db.password>
-        <db.driver>org.postgresql.Driver</db.driver>
     </properties>
 
     <dependencies>
@@ -111,19 +92,6 @@
                             <artifactId>lombok</artifactId>
                         </exclude>
                     </excludes>
-                </configuration>
-            </plugin>
-
-            <plugin>
-                <groupId>org.liquibase</groupId>
-                <artifactId>liquibase-maven-plugin</artifactId>
-                <version>4.29.2</version>
-                <configuration>
-                    <url>jdbc:postgresql://${db.host}:${db.port}/${db.name}</url>
-                    <username>${db.username}</username>
-                    <password>${db.password}</password>
-                    <changeLogFile>src/main/resources/db/changelog/db.changelog-master.xml</changeLogFile>
-                    <driver>${db.driver}</driver>
                 </configuration>
             </plugin>
 
