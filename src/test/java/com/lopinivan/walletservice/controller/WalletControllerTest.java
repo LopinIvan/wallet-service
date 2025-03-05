@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.lopinivan.walletservice.dto.OperationType;
 import com.lopinivan.walletservice.dto.WalletTransactionRequest;
 import com.lopinivan.walletservice.entity.Wallet;
+import com.lopinivan.walletservice.exception.ErrorMessage;
 import com.lopinivan.walletservice.exception.InsufficientFundsException;
 import com.lopinivan.walletservice.service.WalletService;
 import org.junit.jupiter.api.Test;
@@ -36,7 +37,7 @@ public class WalletControllerTest {
 
     private static final String BASE_URL = "/api/v1/wallet";
 
-    // Пустой запрос
+    // Пустой запрос (валидация)
     @Test
     void testValidationError() throws Exception {
         mockMvc.perform(post(BASE_URL)
@@ -44,11 +45,11 @@ public class WalletControllerTest {
                         .content("{}"))
                 .andDo(print())
                 .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.walletId").exists())
-                .andExpect(jsonPath("$.amount").exists());
+                .andExpect(jsonPath("$.error").value(ErrorMessage.VALIDATION_ERROR.getMessage()))
+                .andExpect(jsonPath("$.message").exists()); // Проверяем, что есть описание ошибки
     }
 
-    // Ложем на депозит
+    // Успешная транзакция (депозит)
     @Test
     void testSuccessfulTransaction() throws Exception {
         WalletTransactionRequest request = new WalletTransactionRequest(
@@ -64,7 +65,7 @@ public class WalletControllerTest {
                 .andExpect(jsonPath("$.message").value("Transaction successful"));
     }
 
-    // Недостаточно средств для списания
+    // Ошибка: недостаточно средств
     @Test
     void testInsufficientFunds() throws Exception {
         WalletTransactionRequest request = new WalletTransactionRequest(
@@ -78,10 +79,11 @@ public class WalletControllerTest {
                         .content(new ObjectMapper().writeValueAsString(request)))
                 .andDo(print())
                 .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.error").value("Insufficient funds"));
+                .andExpect(jsonPath("$.error").value(ErrorMessage.INSUFFICIENT_FUNDS.getMessage()))
+                .andExpect(jsonPath("$.message").value("Insufficient funds"));
     }
 
-    // Получение баланса
+    // Успешное получение баланса
     @Test
     void testGetBalanceSuccess() throws Exception {
         UUID walletId = UUID.randomUUID();
@@ -89,7 +91,7 @@ public class WalletControllerTest {
         Wallet wallet = new Wallet(walletId, balance, LocalDateTime.now(), LocalDateTime.now());
         when(walletService.getWallet(walletId)).thenReturn(Optional.of(wallet));
 
-        mockMvc.perform(get("/api/v1/wallet/" + walletId)
+        mockMvc.perform(get(BASE_URL + "/" + walletId)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andDo(print())
                 .andExpect(status().isOk())
@@ -97,16 +99,17 @@ public class WalletControllerTest {
                 .andExpect(jsonPath("$.balance").value(balance));
     }
 
-    // Не найден баланс
+    // Ошибка: кошелек не найден
     @Test
     void testGetBalanceNotFound() throws Exception {
         UUID walletId = UUID.randomUUID();
         when(walletService.getWallet(walletId)).thenReturn(Optional.empty());
 
-        mockMvc.perform(get("/api/v1/wallet/" + walletId)
+        mockMvc.perform(get(BASE_URL + "/" + walletId)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andDo(print())
                 .andExpect(status().isNotFound())
-                .andExpect(jsonPath("$.error").value("Wallet not found with id: " + walletId));
+                .andExpect(jsonPath("$.error").value(ErrorMessage.WALLET_NOT_FOUND.getMessage()))
+                .andExpect(jsonPath("$.message").value("Wallet not found with id: " + walletId));
     }
 }
