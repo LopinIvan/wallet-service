@@ -3,7 +3,7 @@ package com.lopinivan.walletservice.controller;
 import com.lopinivan.walletservice.dto.WalletBalanceResponse;
 import com.lopinivan.walletservice.dto.WalletTransactionRequest;
 import com.lopinivan.walletservice.exception.WalletNotFoundException;
-import com.lopinivan.walletservice.mapper.WalletMapperImpl;
+import com.lopinivan.walletservice.mapper.WalletMapper;
 import com.lopinivan.walletservice.service.WalletService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -19,7 +19,7 @@ import java.util.UUID;
 public class WalletController {
 
     private final WalletService service;
-    private final WalletMapperImpl mapper;
+    private final WalletMapper mapper;
 
     @PostMapping
     public ResponseEntity<Map<String, String>> updateBalance(@RequestBody @Valid WalletTransactionRequest request) {

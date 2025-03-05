@@ -6,7 +6,7 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
 @Mapper(componentModel = "spring")
-public interface WalletMapperImpl {
+public interface WalletMapper {
 
     @Mapping(source = "id", target = "walletId")
     WalletBalanceResponse toWalletBalanceResponse(Wallet wallet);
